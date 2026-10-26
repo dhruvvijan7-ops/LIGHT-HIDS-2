@@ -1,0 +1,46 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+.hypothesis/
+.mypy_cache/
+
+# Local data
+.sentinel-data/
+.corpus/
+var/
+*.log
+
+# Third-party corpora / engines (D6-009, revised): datasets, captures and
+# full upstream checkouts never enter the tree - they are fetched out-of-tree
+# into .corpus/ with a pinned sha256.  Curated *rule* files are the exception:
+# tests/conformance/rules/ is committed because DRL-1.1 permits redistribution
+# with attribution (tests/conformance/ATTRIBUTION.md).
+research/work/_stage1_work/drl/
+research/work/_stage1_work/pySigma/
+research/work/_stage1_work/pysigma-sqlite/
+research/work/_stage1_work/sigma-rules/
+research/work/_stage1_work/sigma-specification/
+
+# Third-party copyrighted content
+Youtube transcripts/
+
+# Packaging byproducts
+sentinel.egg-info/
+
+# Env
+.env
+.env.local
+
+# Local compose port remap (Windows excluded port range; CI uses the committed
+docker-compose.yml default)
+docker-compose.override.yml
+
+# OS
+Thumbs.db
+Desktop.ini
+.DS_Store

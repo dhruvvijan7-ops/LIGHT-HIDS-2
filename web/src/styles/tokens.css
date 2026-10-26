@@ -1,0 +1,99 @@
+/* Sentinel design tokens — shared by landing and console.
+   Dark-first. One signature accent (signal amber). Severity colors are
+   always paired with a text label; never used as the only indicator. */
+
+:root {
+  color-scheme: dark;
+
+  /* Backgrounds */
+  --bg: #0b0c0e;
+  --bg-2: #101216;
+  --surface: #15181d;
+  --surface-2: #1b1f26;
+
+  /* Text */
+  --text: #e9ebee;
+  --text-2: #9aa1ab;
+  --text-3: #6b7280;
+
+  /* Lines */
+  --border: #232830;
+  --border-2: #2e343e;
+
+  /* Signature accent — signal amber */
+  --accent: #f0a82e;
+  --accent-soft: rgba(240, 168, 46, 0.14);
+  --accent-text: #0b0c0e;
+
+  /* Interactive */
+  --focus: #9ecbf5;
+  --link: #c8d7e8;
+
+  /* Status */
+  --ok: #7bc67e;
+  --warn: #f0a82e;
+  --error: #e5654b;
+  --info: #9ecbf5;
+  --ok-soft: rgba(123, 198, 126, 0.13);
+  --warn-soft: rgba(240, 168, 46, 0.13);
+  --error-soft: rgba(229, 101, 75, 0.13);
+  --info-soft: rgba(158, 203, 245, 0.12);
+
+  /* Severity (paired with text labels everywhere) */
+  --sev-low: #7bc67e;
+  --sev-medium: #f0a82e;
+  --sev-high: #e5654b;
+
+  /* Typography */
+  --font-display: "Instrument Serif", Georgia, "Times New Roman", serif;
+  --font-sans: "Inter Variable", "Inter", system-ui, -apple-system, sans-serif;
+  --font-mono:
+    "JetBrains Mono Variable", "JetBrains Mono", ui-monospace, "Cascadia Mono",
+    Menlo, monospace;
+
+  /* Type scale (fluid) */
+  --fs-display: clamp(3rem, 7.2vw, 6.75rem);
+  --fs-h1: clamp(2.25rem, 4.6vw, 3.75rem);
+  --fs-h2: clamp(1.65rem, 3vw, 2.5rem);
+  --fs-h3: clamp(1.2rem, 1.7vw, 1.5rem);
+  --fs-body: 1rem;
+  --fs-sm: 0.875rem;
+  --fs-xs: 0.75rem;
+
+  /* Spacing */
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 24px;
+  --sp-6: 32px;
+  --sp-7: 48px;
+  --sp-8: 64px;
+  --sp-9: 96px;
+  --sp-10: 128px;
+
+  /* Layout */
+  --w-landing: 1360px;
+  --w-prose: 64ch;
+  --gutter: clamp(20px, 4vw, 48px);
+
+  /* Radii */
+  --r-sm: 6px;
+  --r-md: 10px;
+  --r-lg: 16px;
+
+  /* Depth */
+  --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-2: 0 8px 28px rgba(0, 0, 0, 0.45);
+
+  /* Motion */
+  --t-fast: 140ms;
+  --t-base: 220ms;
+  --t-slow: 480ms;
+  --t-reveal: 700ms;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* Layers */
+  --z-nav: 100;
+  --z-overlay: 200;
+}

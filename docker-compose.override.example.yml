@@ -1,0 +1,16 @@
+# Copy this file to docker-compose.override.yml (gitignored) if host port 54321
+# is blocked — on Windows you may see:
+#   "bind: An attempt was made to access a socket in a way forbidden by its
+#    access permissions"
+# (Hyper-V / WinNAT reserved port ranges commonly swallow 54321-54420.)
+#
+# docker compose picks docker-compose.override.yml up automatically. If you
+# remap to 54310, point the app at it in .env:
+#   SENTINEL_DATABASE_URL=postgresql+psycopg://sentinel_app:sentinel_app@127.0.0.1:54310/sentinel
+#   SENTINEL_DATABASE_MIGRATOR_URL=postgresql+psycopg://sentinel_migrator:sentinel_migrator@127.0.0.1:54310/sentinel
+#   SENTINEL_DATABASE_WORKER_URL=postgresql+psycopg://sentinel_worker:sentinel_worker@127.0.0.1:54310/sentinel
+services:
+  db:
+    # !override replaces the base ports list instead of appending to it.
+    ports: !override
+      - "54310:5432"

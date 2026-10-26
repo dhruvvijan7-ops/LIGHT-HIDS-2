@@ -1,0 +1,139 @@
+name: ci
+
+# M0 regression gates. The spec's "9a. M0 exit criteria → machine gate"
+# table is authoritative for which committed artefact enforces which §9 M0
+# exit criterion; tests/contract/test_m0_exit_gates.py keeps this file in
+# step with it. Summary:
+#
+#   contract    -> ② openapi.yaml ($ref / operationId), ③ example corpora,
+#                  ④ static RLS lint, ⑤ DEPENDENCY licences, plus the
+#                  frozen-config, canonical-event and tripwire gates.
+#                  No database.
+#   schema      -> ① psql lint, alembic upgrade head, catalog diff vs
+#                  schema.sql.
+#   integration -> ④ dynamic RLS probe, plus the M1 e2e upload flow.
+#   scoring     -> M2 exit ⑥: fetch the out-of-tree UNSW-NB15 corpus
+#                  (sha + row pins, citation manifest) and score the frozen
+#                  pack against it. Fails hard when the corpus is missing.
+#
+# Contract runs on Windows because Sentinel is Windows-first: the frozen
+# artefacts (schema.sql, config.example.toml, the spec tables) must parse
+# identically under cp1252-default tooling. Schema and integration run on
+# Linux against PostgreSQL 18 in the same docker-compose topology the dev
+# environment uses.
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  PYTHONIOENCODING: utf-8
+  SENTINEL_CONFIG: configs/config.example.toml
+
+# PostgreSQL password removed for public repo
+# PGPASSWORD is set at runtime via docker compose
+
+jobs:
+  contract:
+    name: contract (windows-latest)
+    runs-on: windows-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+          cache: pip
+          cache-dependency-path: requirements.txt
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install -e .
+      - name: Contract, unit and tripwire gates (no database)
+        run: pytest tests/contract tests/unit tests/tripwire
+
+  schema:
+    name: schema (ubuntu-latest, postgres 18)
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      # psql client on PATH authenticates with the compose superuser password;
+      # schema_lint falls back to `docker exec` when no client is installed.
+      PGPASSWORD: sentinel_dev_pw
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+          cache: pip
+          cache-dependency-path: requirements.txt
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install -e .
+      - name: Start PostgreSQL 18
+        run: docker compose up -d --wait
+      - name: psql lint + migration chain catalog diff
+        run: python tools/schema_lint.py
+
+  integration:
+    name: integration (ubuntu-latest, postgres 18)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+          cache: pip
+          cache-dependency-path: requirements.txt
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install -e .
+      - name: Start PostgreSQL 18
+        run: docker compose up -d --wait
+      - name: Dynamic RLS probe + M1 e2e flow
+        # `not slow` is the contract declared in tests/integration/conftest.py:
+        # the 10k-job soak and the docker stop/start readiness flip are local
+        # diagnostics, not per-commit gates.
+        run: pytest tests/integration tests/e2e -m "not slow"
+
+  scoring:
+    name: scoring (windows-latest, UNSW-NB15)
+    runs-on: windows-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+          cache: pip
+          cache-dependency-path: requirements.txt
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install -e .
+      - name: Cache the out-of-tree corpus (D6-009 datasets are not committed)
+        uses: actions/cache@v4
+        with:
+          path: .corpus
+          key: corpus-${{ hashFiles('tools/evaluate_unsw_nb15.py', 'tools/corpus_fetch.py') }}
+      - name: Pin + fetch UNSW-NB15 (hard failure on missing corpus or sha/size drift)
+        run: python tools/corpus_fetch.py
+      - name: M2 exit ⑥ scored-run gate
+        # tests never skip: a missing corpus is a red job, not a vacuous pass.
+        run: pytest tests/scoring

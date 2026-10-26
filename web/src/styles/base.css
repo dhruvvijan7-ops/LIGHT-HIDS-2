@@ -1,0 +1,385 @@
+/* Global base — reset, typography, focus, shared primitives. */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: var(--fs-body);
+  line-height: 1.6;
+  font-optical-sizing: auto;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  margin: 0;
+  line-height: 1.12;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+p {
+  margin: 0;
+}
+
+a {
+  color: var(--link);
+  text-decoration: none;
+  transition: color var(--t-fast) var(--ease-out);
+}
+
+a:hover {
+  color: var(--text);
+}
+
+button {
+  font: inherit;
+  color: inherit;
+}
+
+img,
+svg,
+canvas {
+  display: block;
+  max-width: 100%;
+}
+
+code,
+kbd,
+samp,
+pre {
+  font-family: var(--font-mono);
+  font-size: 0.92em;
+}
+
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+::selection {
+  background: var(--accent-soft);
+  color: var(--text);
+}
+
+/* ---------- primitives ---------- */
+
+.mono {
+  font-family: var(--font-mono);
+  font-size: 0.92em;
+}
+
+.label {
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+
+.prose {
+  max-width: var(--w-prose);
+  color: var(--text-2);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-2);
+  padding: 0 20px;
+  height: 44px;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--border-2);
+  background: var(--surface);
+  color: var(--text);
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  transition:
+    background var(--t-fast) var(--ease-out),
+    border-color var(--t-fast) var(--ease-out),
+    color var(--t-fast) var(--ease-out),
+    transform var(--t-fast) var(--ease-out);
+}
+
+.btn:hover:not(:disabled) {
+  background: var(--surface-2);
+  border-color: #3a414d;
+}
+
+.btn:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-text);
+  font-weight: 600;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: #ffb94d;
+  border-color: #ffb94d;
+}
+
+.btn-ghost {
+  background: transparent;
+  border-color: var(--border);
+}
+
+.btn-danger {
+  border-color: rgba(229, 101, 75, 0.5);
+  color: #f0a292;
+}
+
+.btn-danger:hover:not(:disabled) {
+  background: var(--error-soft);
+  border-color: var(--error);
+}
+
+.btn-sm {
+  height: 34px;
+  padding: 0 12px;
+  font-size: var(--fs-xs);
+}
+
+.input,
+.select,
+.textarea {
+  width: 100%;
+  background: var(--bg-2);
+  border: 1px solid var(--border-2);
+  border-radius: var(--r-sm);
+  color: var(--text);
+  padding: 10px 12px;
+  font-size: var(--fs-sm);
+  font-family: inherit;
+  transition:
+    border-color var(--t-fast) var(--ease-out),
+    background var(--t-fast) var(--ease-out);
+}
+
+.input:hover,
+.select:hover,
+.textarea:hover {
+  border-color: #3a414d;
+}
+
+.input::placeholder,
+.textarea::placeholder {
+  color: var(--text-3);
+}
+
+.textarea {
+  min-height: 120px;
+  resize: vertical;
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  line-height: 1.55;
+}
+
+.select {
+  appearance: none;
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--text-3) 50%),
+    linear-gradient(135deg, var(--text-3) 50%, transparent 50%);
+  background-position:
+    calc(100% - 16px) calc(50% - 2px),
+    calc(100% - 11px) calc(50% - 2px);
+  background-size:
+    5px 5px,
+    5px 5px;
+  background-repeat: no-repeat;
+  padding-right: 30px;
+}
+
+/* Badges */
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 9px;
+  border-radius: 999px;
+  border: 1px solid var(--border-2);
+  background: var(--surface);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-2);
+  white-space: nowrap;
+}
+
+.badge::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  flex: none;
+}
+
+.badge-ok {
+  color: var(--ok);
+  border-color: rgba(123, 198, 126, 0.35);
+  background: var(--ok-soft);
+}
+.badge-warn {
+  color: var(--warn);
+  border-color: rgba(240, 168, 46, 0.35);
+  background: var(--warn-soft);
+}
+.badge-error {
+  color: var(--error);
+  border-color: rgba(229, 101, 75, 0.35);
+  background: var(--error-soft);
+}
+.badge-info {
+  color: var(--info);
+  border-color: rgba(158, 203, 245, 0.32);
+  background: var(--info-soft);
+}
+.badge-plain {
+  color: var(--text-2);
+}
+
+/* Tables */
+
+.table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  background: var(--surface);
+}
+
+table.data {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--fs-sm);
+}
+
+table.data th {
+  text-align: left;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  font-weight: 500;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-2);
+  white-space: nowrap;
+  position: sticky;
+  top: 0;
+}
+
+table.data td {
+  padding: 11px 14px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+  color: var(--text-2);
+}
+
+table.data tr:last-child td {
+  border-bottom: none;
+}
+
+table.data tbody tr {
+  transition: background var(--t-fast) var(--ease-out);
+}
+
+table.data tbody tr:hover {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+table.data a {
+  color: var(--text);
+  text-decoration: underline;
+  text-decoration-color: var(--border-2);
+  text-underline-offset: 3px;
+}
+
+table.data a:hover {
+  text-decoration-color: var(--accent);
+}
+
+/* Scrollbar */
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-2);
+  border-radius: 6px;
+  border: 2px solid var(--bg);
+}
+
+/* Reduced motion — kill non-essential movement globally. */
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  /* !important is the correct pattern here: reduced-motion overrides must win
+     over any component-level transition/animation. */
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .reveal {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+
+/* Reveal-on-scroll (driven by IntersectionObserver) */
+
+.reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition:
+    opacity var(--t-reveal) var(--ease-out),
+    transform var(--t-reveal) var(--ease-out);
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
